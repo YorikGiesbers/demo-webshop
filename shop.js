@@ -56,21 +56,6 @@ function getBasket() {
 function addToBasket(product, variant = "regular") {
   const basket = getBasket();
   
-  // Check for strawberry/banana conflict
-  const hasStrawberry = basket.some(item => {
-    if (typeof item === "string") return item === "strawberry";
-    return item.product === "strawberry";
-  });
-  const hasBanana = basket.some(item => {
-    if (typeof item === "string") return item === "banana";
-    return item.product === "banana";
-  });
-  
-  if ((product === "strawberry" && hasBanana) || (product === "banana" && hasStrawberry)) {
-    showError("Strawberries and bananas cannot be combined.");
-    return;
-  }
-  
   // Store product with variant information
   const basketItem = {
     product: product,
