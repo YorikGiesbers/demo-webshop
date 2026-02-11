@@ -1,8 +1,44 @@
 const PRODUCTS = {
-  apple: { name: "Apple", emoji: "🍏" },
-  banana: { name: "Banana", emoji: "🍌" },
-  lemon: { name: "Lemon", emoji: "🍋" },
-  strawberry: { name: "Strawberry", emoji: "🍓" },
+  apple: { 
+    name: "Apple", 
+    emoji: "🍏",
+    variants: [
+      { id: "regular", name: "Regular" },
+      { id: "caramel", name: "Caramel Coated" },
+      { id: "candy", name: "Candy Coated" },
+      { id: "chocolate", name: "Chocolate Dipped" }
+    ]
+  },
+  banana: { 
+    name: "Banana", 
+    emoji: "🍌",
+    variants: [
+      { id: "regular", name: "Regular" },
+      { id: "chocolate", name: "Chocolate Covered" },
+      { id: "nutella", name: "Nutella Filled" },
+      { id: "frozen", name: "Frozen" }
+    ]
+  },
+  lemon: { 
+    name: "Lemon", 
+    emoji: "🍋",
+    variants: [
+      { id: "regular", name: "Regular" },
+      { id: "candied", name: "Candied" },
+      { id: "glazed", name: "Honey Glazed" },
+      { id: "preserved", name: "Preserved" }
+    ]
+  },
+  strawberry: { 
+    name: "Strawberry", 
+    emoji: "🍓",
+    variants: [
+      { id: "regular", name: "Regular" },
+      { id: "stick", name: "On a Stick" },
+      { id: "chocolate", name: "Chocolate Covered" },
+      { id: "whipped", name: "With Whipped Cream" }
+    ]
+  },
 };
 
 function getBasket() {
@@ -17,19 +53,16 @@ function getBasket() {
   }
 }
 
-function addToBasket(product) {
+function addToBasket(product, variant = "regular") {
   const basket = getBasket();
   
-  // Check for strawberry/banana conflict
-  const hasStrawberry = basket.includes("strawberry");
-  const hasBanana = basket.includes("banana");
+  // Store product with variant information
+  const basketItem = {
+    product: product,
+    variant: variant
+  };
   
-  if ((product === "strawberry" && hasBanana) || (product === "banana" && hasStrawberry)) {
-    showError("Strawberries and bananas cannot be combined.");
-    return;
-  }
-  
-  basket.push(product);
+  basket.push(basketItem);
   localStorage.setItem("basket", JSON.stringify(basket));
   clearError();
 }
@@ -54,20 +87,25 @@ function renderBasket() {
   const regularItems = [];
   const requestedItems = [];
   
-  basket.forEach((product) => {
-    if (typeof product === "object" && product.type === "custom") {
-      requestedItems.push(product);
+  basket.forEach((item) => {
+    if (typeof item === "object" && item.type === "custom") {
+      requestedItems.push(item);
     } else {
-      regularItems.push(product);
+      regularItems.push(item);
     }
   });
   
   // Render regular items
-  regularItems.forEach((product) => {
-    const item = PRODUCTS[product];
-    if (item) {
+  regularItems.forEach((item) => {
+    const product = typeof item === "string" ? item : item.product;
+    const variant = typeof item === "string" ? "regular" : item.variant;
+    const productData = PRODUCTS[product];
+    
+    if (productData) {
       const li = document.createElement("li");
-      li.innerHTML = `<span class='basket-emoji'>${item.emoji}</span> <span>${item.name}</span>`;
+      const variantData = productData.variants?.find(v => v.id === variant);
+      const variantName = variantData ? ` - ${variantData.name}` : "";
+      li.innerHTML = `<span class='basket-emoji'>${productData.emoji}</span> <span>${productData.name}${variantName}</span>`;
       basketList.appendChild(li);
     }
   });
@@ -246,8 +284,8 @@ if (document.readyState !== "loading") {
 
 // Patch basket functions to update indicator
 const origAddToBasket = window.addToBasket;
-window.addToBasket = function (product) {
-  origAddToBasket(product);
+window.addToBasket = function (product, variant) {
+  origAddToBasket(product, variant);
   renderBasketIndicator();
 };
 const origClearBasket = window.clearBasket;

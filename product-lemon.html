@@ -40,6 +40,15 @@
         <div class="product-desc" aria-label="Product description">
           When life gives you lemons, make a website.
         </div>
+        <div class="variant-selector">
+          <label for="variantSelect">Choose a variant:</label>
+          <select id="variantSelect" aria-label="Select lemon variant">
+            <option value="regular">Regular</option>
+            <option value="candied">Candied</option>
+            <option value="glazed">Honey Glazed</option>
+            <option value="preserved">Preserved</option>
+          </select>
+        </div>
         <div class="button-container">
           <button
             id="addToBasket"
@@ -63,7 +72,8 @@
     <script src="shop.js"></script>
     <script>
       document.getElementById("addToBasket").onclick = function () {
-        addToBasket("lemon");
+        const variant = document.getElementById("variantSelect").value;
+        addToBasket("lemon", variant);
       };
     </script>
   </body>

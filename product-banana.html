@@ -40,6 +40,15 @@
         <div class="product-desc" aria-label="Product description">
           Nature's energy bar. Also, monkeys approve!
         </div>
+        <div class="variant-selector">
+          <label for="variantSelect">Choose a variant:</label>
+          <select id="variantSelect" aria-label="Select banana variant">
+            <option value="regular">Regular</option>
+            <option value="chocolate">Chocolate Covered</option>
+            <option value="nutella">Nutella Filled</option>
+            <option value="frozen">Frozen</option>
+          </select>
+        </div>
         <div class="button-container">
           <button
             id="addToBasket"
@@ -63,7 +72,8 @@
     <script src="shop.js"></script>
     <script>
       document.getElementById("addToBasket").onclick = function () {
-        addToBasket("banana");
+        const variant = document.getElementById("variantSelect").value;
+        addToBasket("banana", variant);
       };
     </script>
   </body>

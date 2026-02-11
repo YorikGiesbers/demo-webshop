@@ -40,6 +40,15 @@
         <div class="product-desc" aria-label="Product description">
           Sweet and juicy, the perfect companion (just not with bananas!).
         </div>
+        <div class="variant-selector">
+          <label for="variantSelect">Choose a variant:</label>
+          <select id="variantSelect" aria-label="Select strawberry variant">
+            <option value="regular">Regular</option>
+            <option value="stick">On a Stick</option>
+            <option value="chocolate">Chocolate Covered</option>
+            <option value="whipped">With Whipped Cream</option>
+          </select>
+        </div>
         <div class="button-container">
           <button
             id="addToBasket"
@@ -63,7 +72,8 @@
     <script src="shop.js"></script>
     <script>
       document.getElementById("addToBasket").onclick = function () {
-        addToBasket("strawberry");
+        const variant = document.getElementById("variantSelect").value;
+        addToBasket("strawberry", variant);
       };
     </script>
   </body>

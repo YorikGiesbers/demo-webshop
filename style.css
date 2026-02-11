@@ -348,6 +348,45 @@ footer a {
   margin-top: 1.2rem;
 }
 
+.variant-selector {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f7faff;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.variant-selector label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #222;
+  font-size: 1rem;
+}
+
+.variant-selector select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #cfd8e3;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #222;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.variant-selector select:hover {
+  border-color: #0077ff;
+}
+
+.variant-selector select:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.1);
+}
+
 #successMsg {
   display: none;
   color: green;
