@@ -40,6 +40,15 @@
         <div class="product-desc" aria-label="Product description">
           Keeps the doctor away (unless you throw it at them).
         </div>
+        <div class="variant-selector">
+          <label for="variantSelect">Choose a variant:</label>
+          <select id="variantSelect" aria-label="Select apple variant">
+            <option value="regular">Regular</option>
+            <option value="caramel">Caramel Coated</option>
+            <option value="candy">Candy Coated</option>
+            <option value="chocolate">Chocolate Dipped</option>
+          </select>
+        </div>
         <div class="button-container">
           <button
             id="addToBasket"
@@ -63,7 +72,8 @@
     <script src="shop.js"></script>
     <script>
       document.getElementById("addToBasket").onclick = function () {
-        addToBasket("apple");
+        const variant = document.getElementById("variantSelect").value;
+        addToBasket("apple", variant);
       };
     </script>
   </body>
