@@ -95,17 +95,33 @@ function renderBasket() {
     }
   });
   
-  // Render regular items
+  // Group regular items by product and variant, counting quantities
+  const groupedItems = {};
   regularItems.forEach((item) => {
     const product = typeof item === "string" ? item : item.product;
     const variant = typeof item === "string" ? "regular" : item.variant;
-    const productData = PRODUCTS[product];
+    const key = `${product}:${variant}`;
+    
+    if (!groupedItems[key]) {
+      groupedItems[key] = {
+        product: product,
+        variant: variant,
+        quantity: 0
+      };
+    }
+    groupedItems[key].quantity++;
+  });
+  
+  // Render grouped regular items with quantities
+  Object.values(groupedItems).forEach((itemGroup) => {
+    const productData = PRODUCTS[itemGroup.product];
     
     if (productData) {
       const li = document.createElement("li");
-      const variantData = productData.variants?.find(v => v.id === variant);
+      const variantData = productData.variants?.find(v => v.id === itemGroup.variant);
       const variantName = variantData ? ` - ${variantData.name}` : "";
-      li.innerHTML = `<span class='basket-emoji'>${productData.emoji}</span> <span>${productData.name}${variantName}</span>`;
+      const quantityLabel = itemGroup.quantity > 1 ? `${itemGroup.quantity}x ` : "";
+      li.innerHTML = `<span class='basket-emoji'>${productData.emoji}</span> <span class='basket-item-quantity'>${quantityLabel}</span><span>${productData.name}${variantName}</span>`;
       basketList.appendChild(li);
     }
   });
