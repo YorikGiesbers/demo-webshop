@@ -36,6 +36,13 @@
     <main id="main-content" role="main">
       <div class="content-box">
         <h1>Your Shopping Basket</h1>
+        <button
+          id="requestProductBtn"
+          class="request-product-btn"
+          aria-label="Request a custom product"
+        >
+          📝 Request Product
+        </button>
         <ul
           class="order-list"
           id="basketList"
@@ -64,8 +71,92 @@
         By Tim Lolkema
       </a>
     </footer>
+    <div id="productRequestModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Request a Custom Product</h2>
+          <button
+            id="closeModalBtn"
+            class="close-modal-btn"
+            aria-label="Close modal"
+          >
+            ✕
+          </button>
+        </div>
+        <form id="productRequestForm">
+          <div class="form-group">
+            <label for="productName">Product Name *</label>
+            <input
+              type="text"
+              id="productName"
+              name="productName"
+              required
+              placeholder="Enter product name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="productDescription">Description *</label>
+            <textarea
+              id="productDescription"
+              name="productDescription"
+              required
+              placeholder="Enter product description"
+              rows="4"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="productLink">Reference Link</label>
+            <input
+              type="url"
+              id="productLink"
+              name="productLink"
+              placeholder="https://example.com (optional)"
+            />
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="submit-btn">Add to Basket</button>
+            <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
     <script src="shop.js"></script>
     <script>
+      const requestProductBtn = document.getElementById("requestProductBtn");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const productRequestModal = document.getElementById("productRequestModal");
+      const productRequestForm = document.getElementById("productRequestForm");
+
+      requestProductBtn.onclick = function () {
+        openProductRequestModal();
+      };
+
+      closeModalBtn.onclick = function () {
+        closeProductRequestModal();
+      };
+
+      cancelBtn.onclick = function () {
+        closeProductRequestModal();
+      };
+
+      productRequestModal.onclick = function (e) {
+        if (e.target === productRequestModal) {
+          closeProductRequestModal();
+        }
+      };
+
+      productRequestForm.onsubmit = function (e) {
+        e.preventDefault();
+        const name = document.getElementById("productName").value;
+        const description = document.getElementById("productDescription").value;
+        const link = document.getElementById("productLink").value;
+        addCustomProductToBasket(name, description, link);
+        productRequestForm.reset();
+        closeProductRequestModal();
+        renderBasket();
+      };
+
       renderBasket();
       document.getElementById("clearBasket").onclick = function () {
         clearBasket();
