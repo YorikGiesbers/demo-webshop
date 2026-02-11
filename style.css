@@ -255,6 +255,11 @@ input[type="text"]:focus {
   display: inline-block;
   margin-right: 0.5rem;
 }
+.basket-item-quantity {
+  font-weight: 700;
+  color: #0077ff;
+  margin-right: 0.3rem;
+}
 #basketList li {
   background: none !important;
 }
