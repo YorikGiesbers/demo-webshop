@@ -284,8 +284,8 @@ if (document.readyState !== "loading") {
 
 // Patch basket functions to update indicator
 const origAddToBasket = window.addToBasket;
-window.addToBasket = function (product) {
-  origAddToBasket(product);
+window.addToBasket = function (product, variant) {
+  origAddToBasket(product, variant);
   renderBasketIndicator();
 };
 const origClearBasket = window.clearBasket;
