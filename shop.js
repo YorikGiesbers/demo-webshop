@@ -39,6 +39,16 @@ const PRODUCTS = {
       { id: "whipped", name: "With Whipped Cream" }
     ]
   },
+  grapes: { 
+    name: "Grapes", 
+    emoji: "🍇",
+    variants: [
+      { id: "regular", name: "Regular" },
+      { id: "seedless", name: "Seedless" },
+      { id: "frozen", name: "Frozen" },
+      { id: "juice", name: "Juice Ready" }
+    ]
+  },
 };
 
 function getBasket() {
