@@ -2,6 +2,7 @@ const PRODUCTS = {
   apple: { name: "Apple", emoji: "🍏" },
   banana: { name: "Banana", emoji: "🍌" },
   lemon: { name: "Lemon", emoji: "🍋" },
+  strawberry: { name: "Strawberry", emoji: "🍓" },
 };
 
 function getBasket() {
@@ -18,8 +19,19 @@ function getBasket() {
 
 function addToBasket(product) {
   const basket = getBasket();
+  
+  // Check for strawberry/banana conflict
+  const hasStrawberry = basket.includes("strawberry");
+  const hasBanana = basket.includes("banana");
+  
+  if ((product === "strawberry" && hasBanana) || (product === "banana" && hasStrawberry)) {
+    showError("Strawberries and bananas cannot be combined.");
+    return;
+  }
+  
   basket.push(product);
   localStorage.setItem("basket", JSON.stringify(basket));
+  clearError();
 }
 
 function clearBasket() {
@@ -46,6 +58,29 @@ function renderBasket() {
     }
   });
   if (cartButtonsRow) cartButtonsRow.style.display = "flex";
+}
+
+function showError(message) {
+  let errorBox = document.querySelector(".error-message");
+  if (!errorBox) {
+    errorBox = document.createElement("div");
+    errorBox.className = "error-message";
+    const mainContent = document.getElementById("main-content");
+    if (mainContent) {
+      mainContent.insertBefore(errorBox, mainContent.firstChild);
+    } else {
+      document.body.insertBefore(errorBox, document.body.firstChild);
+    }
+  }
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
+}
+
+function clearError() {
+  const errorBox = document.querySelector(".error-message");
+  if (errorBox) {
+    errorBox.style.display = "none";
+  }
 }
 
 function renderBasketIndicator() {
