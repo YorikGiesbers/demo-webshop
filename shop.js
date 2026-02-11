@@ -53,6 +53,11 @@ function getBasket() {
   }
 }
 
+/**
+ * Adds a product to the basket with optional variant selection
+ * @param {string} product - Product ID
+ * @param {string} [variant="regular"] - Product variant ID
+ */
 function addToBasket(product, variant = "regular") {
   const basket = getBasket();
   
@@ -65,10 +70,40 @@ function addToBasket(product, variant = "regular") {
   basket.push(basketItem);
   localStorage.setItem("basket", JSON.stringify(basket));
   clearError();
+  showSuccess("Item added to basket!");
 }
 
+/**
+ * Clears all items from the basket
+ */
 function clearBasket() {
   localStorage.removeItem("basket");
+  clearError();
+}
+
+/**
+ * Shows a success message to the user
+ * @param {string} message - Success message to display
+ */
+function showSuccess(message) {
+  let successBox = document.querySelector(".success-message");
+  if (!successBox) {
+    successBox = document.createElement("div");
+    successBox.className = "success-message";
+    const mainContent = document.getElementById("main-content");
+    if (mainContent) {
+      mainContent.insertBefore(successBox, mainContent.firstChild);
+    } else {
+      document.body.insertBefore(successBox, document.body.firstChild);
+    }
+  }
+  successBox.textContent = message;
+  successBox.style.display = "block";
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    successBox.style.display = "none";
+  }, 3000);
 }
 
 function renderBasket() {
@@ -163,24 +198,31 @@ function renderBasket() {
   attachRequestedItemListeners();
 }
 
+/**
+ * Attach event listeners to requested item buttons using event delegation
+ */
 function attachRequestedItemListeners() {
-  document.querySelectorAll(".edit-requested-item-btn").forEach((btn) => {
-    btn.onclick = function (e) {
-      e.preventDefault();
-      const id = this.getAttribute("data-id");
-      editRequestedItem(id);
-    };
-  });
+  const basketList = document.getElementById("basketList");
+  if (!basketList) return;
   
-  document.querySelectorAll(".remove-requested-item-btn").forEach((btn) => {
-    btn.onclick = function (e) {
+  // Use event delegation for better performance
+  basketList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("edit-requested-item-btn")) {
       e.preventDefault();
-      const id = this.getAttribute("data-id");
+      const id = e.target.getAttribute("data-id");
+      editRequestedItem(id);
+    } else if (e.target.classList.contains("remove-requested-item-btn")) {
+      e.preventDefault();
+      const id = e.target.getAttribute("data-id");
       removeRequestedItem(id);
-    };
+    }
   });
 }
 
+/**
+ * Shows an error message to the user
+ * @param {string} message - Error message to display
+ */
 function showError(message) {
   let errorBox = document.querySelector(".error-message");
   if (!errorBox) {
@@ -197,10 +239,17 @@ function showError(message) {
   errorBox.style.display = "block";
 }
 
+/**
+ * Clears any displayed error messages
+ */
 function clearError() {
   const errorBox = document.querySelector(".error-message");
   if (errorBox) {
     errorBox.style.display = "none";
+  }
+  const successBox = document.querySelector(".success-message");
+  if (successBox) {
+    successBox.style.display = "none";
   }
 }
 
