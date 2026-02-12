@@ -84,11 +84,118 @@ function addToBasket(product, variant = "regular") {
 }
 
 /**
- * Clears all items from the basket
+ * Saves the current order to localStorage with timestamp
+ * @param {Array} basket - The basket items to save
+ */
+function saveOrder(basket) {
+  const order = {
+    items: basket,
+    timestamp: new Date().toISOString(),
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString()
+  };
+  localStorage.setItem("lastOrder", JSON.stringify(order));
+}
+
+/**
+ * Retrieves the last completed order from localStorage
+ * @returns {Object|null} The last order object or null if no order exists
+ */
+function getLastOrder() {
+  try {
+    const order = localStorage.getItem("lastOrder");
+    if (!order) return null;
+    return JSON.parse(order);
+  } catch (error) {
+    console.error("Error retrieving last order:", error);
+    return null;
+  }
+}
+
+/**
+ * Clears all items from the basket after saving them as an order
  */
 function clearBasket() {
+  const basket = getBasket();
+  if (basket.length > 0) {
+    saveOrder(basket);
+  }
   localStorage.removeItem("basket");
   clearError();
+}
+
+/**
+ * Displays the last completed order summary on the checkout page
+ * @param {string} containerId - ID of the container to display the order in
+ */
+function displayOrderSummary(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  const order = getLastOrder();
+  if (!order) return;
+  
+  const regularItems = [];
+  const requestedItems = [];
+  
+  // Separate regular and requested items
+  order.items.forEach((item) => {
+    if (typeof item === "object" && item.type === "custom") {
+      requestedItems.push(item);
+    } else {
+      regularItems.push(item);
+    }
+  });
+  
+  // Group regular items by product and variant, counting quantities
+  const groupedItems = {};
+  regularItems.forEach((item) => {
+    const product = typeof item === "string" ? item : item.product;
+    const variant = typeof item === "string" ? "regular" : item.variant;
+    const key = product + ":" + variant;
+    
+    if (!groupedItems[key]) {
+      groupedItems[key] = {
+        product: product,
+        variant: variant,
+        quantity: 0
+      };
+    }
+    groupedItems[key].quantity++;
+  });
+  
+  // Build order summary HTML
+  let summaryHTML = '<div class="order-summary">\n';
+  summaryHTML += '<h2>Order Summary</h2>\n';
+  summaryHTML += '<p class="order-date">Ordered on ' + order.date + ' at ' + order.time + '</p>\n';
+  summaryHTML += '<ul class="order-items">\n';
+  
+  // Add grouped regular items
+  Object.values(groupedItems).forEach((itemGroup) => {
+    const productData = PRODUCTS[itemGroup.product];
+    if (productData) {
+      const variantData = productData.variants?.find(v => v.id === itemGroup.variant);
+      const variantName = variantData ? " - " + variantData.name : "";
+      const quantityLabel = itemGroup.quantity > 1 ? itemGroup.quantity + "x " : "";
+      summaryHTML += '<li><span class="order-item-emoji">' + productData.emoji + '</span> <span class="order-item-quantity">' + quantityLabel + '</span>' + productData.name + variantName + '</li>\n';
+    }
+  });
+  
+  // Add requested items section if any
+  if (requestedItems.length > 0) {
+    summaryHTML += '<li class="order-requested-header"><strong>Requested Items</strong></li>\n';
+    requestedItems.forEach((item) => {
+      summaryHTML += '<li class="order-requested-item"><span class="order-item-emoji">📝</span> ' + item.name + '</li>\n';
+    });
+  }
+  
+  summaryHTML += '</ul>\n';
+  summaryHTML += '<div class="order-actions">\n';
+  summaryHTML += '<a href="index.html" class="continue-shopping-btn">Continue Shopping</a>\n';
+  summaryHTML += '</div>\n';
+  summaryHTML += '</div>\n';
+  
+  container.innerHTML = summaryHTML;
 }
 
 /**
